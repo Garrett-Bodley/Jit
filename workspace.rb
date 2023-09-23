@@ -1,3 +1,5 @@
+require 'pry'
+
 class Workspace
   IGNORE = [".", "..", ".git"]
   def initialize(pathname)

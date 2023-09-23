@@ -7,6 +7,7 @@ require_relative './entry.rb'
 require_relative './tree.rb'
 require_relative './author.rb'
 require_relative './commit.rb'
+require_relative './refs.rb'
 
 command = ARGV.shift
 
@@ -36,11 +37,11 @@ when "commit"
 
   workspace = Workspace.new(root_path)
   database = Database.new(db_path)
+  refs = Refs.new(git_path)
 
   entries = workspace.list_files.map do |path|
     data = workspace.read_file(path)
     blob = Blob.new(data)
-
     database.store(blob)
 
     Entry.new(path, blob.oid)
@@ -50,19 +51,22 @@ when "commit"
 
   puts "tree: #{tree.oid}"
 
+  parent = refs.read_head
   name = ENV.fetch("GIT_AUTHOR_NAME")
   email = ENV.fetch("GIT_AUTHOR_EMAIL")
   author = Author.new(name, email, Time.now)
   message = $stdin.read
 
-  commit = Commit.new(tree.oid, author, message)
+  commit = Commit.new(parent, tree.oid, author, message)
   database.store(commit)
 
   File.open(git_path.join("HEAD"), File::WRONLY | File::CREAT) do |file|
     file.puts(commit.oid)
   end
 
-  puts "[(root-commit) #{ commit.oid }] #{ message.lines.first }"
+  is_root = parent.nil? ? "(root-commit) " : ""
+
+  puts "[#{ is_root }#{ commit.oid }] #{ message.lines.first }"
   exit 0
 
 else

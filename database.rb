@@ -1,5 +1,6 @@
 require "digest/sha1"
 require "zlib"
+require 'pry'
 
 require_relative "./blob.rb"
 
