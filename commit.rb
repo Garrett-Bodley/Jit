@@ -1,3 +1,6 @@
+# frozen_string_literal: true
+
+# Represents a commit object
 class Commit
   attr_accessor :oid
 
@@ -9,17 +12,17 @@ class Commit
   end
 
   def type
-    "commit"
+    'commit'
   end
 
   def to_s
     lines = []
 
     lines.push("tree #{ @tree }")
-    lines.push("parent #{@parent}") if @parent
+    lines.push("parent #{ @parent }") if @parent
     lines.push("author #{ @author }")
     lines.push("committer #{ @author}")
-    lines.push("")
+    lines.push('')
     lines.push(@message)
 
     lines.join("\n")

@@ -1,6 +1,9 @@
+# frozen_string_literal: true
+
+# Represents a Tree object in the databse
 class Tree
-  ENTRY_FORMAT = "Z*H40"
-  MODE = "100644"
+  ENTRY_FORMAT = 'Z*H40'
+  MODE = '100644'
 
   attr_accessor :oid
 
@@ -9,7 +12,7 @@ class Tree
   end
 
   def type
-    "tree"
+    'tree'
   end
 
   def to_s
@@ -17,6 +20,6 @@ class Tree
       ["#{MODE} #{ entry.name }", entry.oid].pack(ENTRY_FORMAT)
     end
 
-    entries.join("")
+    entries.join('')
   end
 end

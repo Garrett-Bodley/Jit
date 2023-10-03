@@ -1,7 +1,10 @@
+# frozen_string_literal: true
+
 require 'pry'
 
+# Represents the working directory of our git repo
 class Workspace
-  IGNORE = [".", "..", ".git"]
+  IGNORE = ['.', '..', '.git'].freeze
   def initialize(pathname)
     @pathname = pathname
   end
