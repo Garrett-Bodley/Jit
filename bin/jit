@@ -1,16 +1,17 @@
+#! /usr/bin/env ruby
 # frozen_string_literal: true
 
 require 'fileutils'
 require 'pathname'
-require_relative './workspace'
-require_relative './database'
-require_relative './blob'
-require_relative './entry'
-require_relative './tree'
-require_relative './author'
-require_relative './commit'
-require_relative './refs'
-require_relative './lockfile'
+require_relative '../workspace'
+require_relative '../database'
+require_relative '../blob'
+require_relative '../entry'
+require_relative '../tree'
+require_relative '../author'
+require_relative '../commit'
+require_relative '../refs'
+require_relative '../lockfile'
 
 command = ARGV.shift
 
@@ -45,14 +46,17 @@ when 'commit'
   entries = workspace.list_files.map do |path|
     data = workspace.read_file(path)
     blob = Blob.new(data)
+
     database.store(blob)
 
-    Entry.new(path, blob.oid)
+    stat = workspace.stat_file(path)
+    Entry.new(path, blob.oid, stat)
   end
-  tree = Tree.new(entries)
-  database.store(tree)
 
-  puts "tree: #{tree.oid}"
+  root = Tree.build(entries)
+  root.traverse { |tree| database.store(tree) }
+
+  puts "tree: #{root.oid}"
 
   parent = refs.read_head
   name = ENV.fetch('GIT_AUTHOR_NAME')
@@ -60,7 +64,7 @@ when 'commit'
   author = Author.new(name, email, Time.now)
   message = $stdin.read
 
-  commit = Commit.new(parent, tree.oid, author, message)
+  commit = Commit.new(parent, root.oid, author, message)
   database.store(commit)
   refs.update_head(commit.oid)
 
