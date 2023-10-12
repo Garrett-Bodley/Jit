@@ -22,7 +22,7 @@ class Refs
 
   def read_head
     return unless File.exist?(head_path)
-
+    binding.pry
     File.read(head_path).strip
   end
 
