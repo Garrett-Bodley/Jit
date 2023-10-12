@@ -3,15 +3,16 @@
 
 require 'fileutils'
 require 'pathname'
-require_relative '../workspace'
-require_relative '../database'
-require_relative '../blob'
-require_relative '../entry'
-require_relative '../tree'
-require_relative '../author'
-require_relative '../commit'
-require_relative '../refs'
-require_relative '../lockfile'
+require 'pry'
+require_relative '../lib/database/author'
+require_relative '../lib/database/blob'
+require_relative '../lib/database/commit'
+require_relative '../lib/database/tree'
+require_relative '../lib/database'
+require_relative '../lib/entry'
+require_relative '../lib/lockfile'
+require_relative '../lib/refs'
+require_relative '../lib/workspace'
 
 command = ARGV.shift
 
@@ -38,14 +39,13 @@ when 'commit'
   root_path = Pathname.new(Dir.getwd)
   git_path = root_path.join('.git')
   db_path = git_path.join('objects')
-
   workspace = Workspace.new(root_path)
   database = Database.new(db_path)
   refs = Refs.new(git_path)
 
   entries = workspace.list_files.map do |path|
     data = workspace.read_file(path)
-    blob = Blob.new(data)
+    blob = Database::Blob.new(data)
 
     database.store(blob)
 
@@ -53,7 +53,7 @@ when 'commit'
     Entry.new(path, blob.oid, stat)
   end
 
-  root = Tree.build(entries)
+  root = Database::Tree.build(entries)
   root.traverse { |tree| database.store(tree) }
 
   puts "tree: #{root.oid}"
@@ -61,10 +61,10 @@ when 'commit'
   parent = refs.read_head
   name = ENV.fetch('GIT_AUTHOR_NAME')
   email = ENV.fetch('GIT_AUTHOR_EMAIL')
-  author = Author.new(name, email, Time.now)
+  author = Database::Author.new(name, email, Time.now)
   message = $stdin.read
 
-  commit = Commit.new(parent, root.oid, author, message)
+  commit = Database::Commit.new(parent, root.oid, author, message)
   database.store(commit)
   refs.update_head(commit.oid)
 
