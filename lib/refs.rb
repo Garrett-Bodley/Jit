@@ -16,13 +16,12 @@ class Refs
     end
 
     lockfile.write(oid)
-    lockfile.write('\n')
+    lockfile.write("\n")
     lockfile.commit
   end
 
   def read_head
     return unless File.exist?(head_path)
-    binding.pry
     File.read(head_path).strip
   end
 
