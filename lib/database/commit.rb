@@ -28,7 +28,8 @@ class Database
 
       out = lines.join("\n")
 
-      puts lines
+      puts @parent
+      puts @author
 
       out
     end
