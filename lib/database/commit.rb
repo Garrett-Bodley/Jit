@@ -28,8 +28,8 @@ class Database
 
       out = lines.join("\n")
 
-      puts "#{@parent}"
-      puts "#{@author}"
+      puts "'#{@parent}'"
+      puts "'#{@author}'"
 
       out
     end
