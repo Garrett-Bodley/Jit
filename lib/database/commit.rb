@@ -26,7 +26,11 @@ class Database
       lines.push('')
       lines.push(@message)
 
-      lines.join("\n")
+      out = lines.join("\n")
+
+      puts lines
+
+      out
     end
   end
 end
