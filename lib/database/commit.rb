@@ -26,12 +26,7 @@ class Database
       lines.push('')
       lines.push(@message)
 
-      out = lines.join("\n")
-
-      puts "'#{@parent}'"
-      puts "'#{@author}'"
-
-      out
+      lines.join("\n")
     end
   end
 end
