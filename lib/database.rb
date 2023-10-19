@@ -36,7 +36,6 @@ class Database
       flags = File::RDWR | File::CREAT | File::EXCL
       file = File.open(temp_path, flags)
     rescue Errno::ENOENT
-      puts dirname
       Dir.mkdir(dirname)
       file = File.open(temp_path, flags)
     end
