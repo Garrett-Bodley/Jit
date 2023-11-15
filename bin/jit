@@ -3,7 +3,7 @@
 
 require 'fileutils'
 require 'pathname'
-require 'pry'
+require 'pry-nav'
 require_relative '../lib/database/author'
 require_relative '../lib/database/blob'
 require_relative '../lib/database/commit'
@@ -13,6 +13,7 @@ require_relative '../lib/entry'
 require_relative '../lib/lockfile'
 require_relative '../lib/refs'
 require_relative '../lib/workspace'
+require_relative '../lib/index'
 
 command = ARGV.shift
 
@@ -35,10 +36,37 @@ when 'init'
   puts "Initialized empty Jit repository in #{ git_path }"
   exit 0
 
+when 'add'
+  root_path = Pathname.new(Dir.getwd)
+  git_path = root_path.join('.git')
+  db_path = git_path.join('objects')
+  index_path = git_path.join('index')
+
+  workspace = Workspace.new(root_path)
+  database = Database.new(db_path)
+  index = Index.new(index_path)
+
+  index.load_for_update
+
+  ARGV.each do |arg_path|
+    path = Pathname.new(File.expand_path(arg_path))
+    workspace.list_files(path).each do |pathname|
+      data = workspace.read_file(pathname)
+      stat = workspace.stat_file(pathname)
+
+      blob = Database::Blob.new(data)
+      database.store(blob)
+      index.add(pathname, blob.oid, stat)
+    end
+  end
+  index.write_updates
+  exit 0
+
 when 'commit'
   root_path = Pathname.new(Dir.getwd)
   git_path = root_path.join('.git')
   db_path = git_path.join('objects')
+
   workspace = Workspace.new(root_path)
   database = Database.new(db_path)
   refs = Refs.new(git_path)

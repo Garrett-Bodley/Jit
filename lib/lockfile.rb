@@ -25,6 +25,13 @@ class Lockfile
     raise NoPermission, error.message
   end
 
+  def rollback
+    raise_on_stale_lock
+    @lock.close
+    File.unlink(@lock_path)
+    @lock = nil
+  end
+
   def write(string)
     raise_on_stale_lock
     @lock.write(string)
