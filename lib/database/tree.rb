@@ -5,6 +5,7 @@ class Database
   class Tree
     ENTRY_FORMAT = 'Z*H40'
     MODE = '100644'
+    TREE_MODE = 040000
 
     attr_accessor :oid
 
@@ -13,9 +14,7 @@ class Database
     end
 
     def self.build(entries)
-      entries.sort_by! { |entry| entry.name.to_s }
       root = Tree.new
-
       entries.each do |entry|
         root.add_entry(entry.parent_directories, entry)
       end
@@ -44,14 +43,15 @@ class Database
 
     def to_s
       entries = @entries.map do |name, entry|
-        ["#{ entry.mode } #{ name }", entry.oid].pack(ENTRY_FORMAT)
+        mode = entry.mode.to_s(8)
+        ["#{ mode } #{ name }", entry.oid].pack(ENTRY_FORMAT)
       end
 
       entries.join('')
     end
 
     def mode
-      Entry::DIRECTORY_MODE
+      TREE_MODE
     end
   end
 end
