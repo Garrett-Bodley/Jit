@@ -6,4 +6,4 @@ Rake::TestTask.new do |task|
   task.pattern = 'test/*_test.rb'
 end
 
-task :default => :test
+task default: :test
