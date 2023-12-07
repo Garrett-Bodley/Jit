@@ -4,6 +4,7 @@
 class Workspace
   IGNORE = ['.', '..', '.git'].freeze
   MissingFile = Class.new(StandardError)
+  NoPermission = Class.new(StandardError)
   def initialize(pathname)
     @pathname = pathname
   end
@@ -22,9 +23,13 @@ class Workspace
 
   def stat_file(path)
     File.stat(@pathname.join(path))
+  rescue Errno::EACCES
+    raise NoPermission, "stat('#{path}'): Permission denied"
   end
 
   def read_file(path)
     File.read(@pathname.join(path))
+  rescue Errno::EACCES
+    raise NoPermission, "open('#{path}'): Permission denied"
   end
 end
