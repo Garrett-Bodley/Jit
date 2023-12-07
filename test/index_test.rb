@@ -26,4 +26,23 @@ describe Index do
     index.add('alice.txt/nested.txt', oid, stat)
     assert_equal ['alice.txt/nested.txt', 'bob.txt'], index.each_entry.map(&:path)
   end
+
+  it 'replaces a directory with a file' do
+    index.add('alice.txt', oid, stat)
+    index.add('nested/bob.txt', oid, stat)
+
+    index.add('nested', oid, stat)
+
+    assert_equal ['alice.txt', 'nested'], index.each_entry.map(&:path)
+  end
+
+  it 'recursively replaces a diretory with a file' do
+    index.add('alice.txt', oid, stat)
+    index.add('nested/bob.txt', oid, stat)
+    index.add('nested/inner/claire.txt', oid, stat)
+
+    index.add('nested', oid, stat)
+
+    assert_equal ['alice.txt', 'nested'], index.each_entry.map(&:path)
+  end
 end
