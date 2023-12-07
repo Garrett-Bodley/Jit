@@ -64,6 +64,10 @@ class Index
     end
   end
 
+  def release_lock
+    @lockfile.rollback
+  end
+
   def each_entry
     if block_given?
       @keys.each { |key| yield @entries[key] }
