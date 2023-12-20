@@ -21,7 +21,7 @@ class Lockfile
     end
     true
   rescue Errno::EEXIST
-    raise LockDenied, "Unable to create `#{ lock_path }`: File exists."
+    raise LockDenied, "Unable to create `#{ @lock_path }`: File exists."
   rescue Errno::ENOENT => error
     raise MissingParent, error.message
   rescue Errno::EACCES => error
