@@ -2,7 +2,6 @@
 
 # Manages the Ref objects
 class Refs
-  LockDenied = Class.new(StandardError)
 
   def initialize(pathname)
     @pathname = pathname
@@ -11,10 +10,7 @@ class Refs
   def update_head(oid)
     lockfile = Lockfile.new(head_path)
 
-    unless lockfile.hold_for_update
-      raise LockDenied, "Could not acquire lock on file: #{ head_path }"
-    end
-
+    lockfile.hold_for_update
     lockfile.write(oid)
     lockfile.write("\n")
     lockfile.commit
@@ -22,6 +18,7 @@ class Refs
 
   def read_head
     return unless File.exist?(head_path)
+
     File.read(head_path).strip
   end
 
