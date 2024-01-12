@@ -6,6 +6,7 @@ class Index
   # Takes a file handle and creates a new Digest::SHA1 object
   class Checksum
     EndOfFile = Class.new(StandardError)
+    Invalid = Class.new(StandardError)
 
     CHECKSUM_SIZE = 20
 
