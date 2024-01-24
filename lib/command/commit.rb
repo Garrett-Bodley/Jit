@@ -8,9 +8,6 @@ module Command
   # Handles Commit logic
   class Commit < Base
     def run # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
-      root_path = Pathname.new(@dir)
-      repo = Repository.new(root_path.join('.git'))
-
       repo.index.load
 
       root = Database::Tree.build(repo.index.each_entry)
