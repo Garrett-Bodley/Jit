@@ -52,7 +52,7 @@ describe Command::Status do
     write_file 'a/b/c/file.txt', ''
 
     assert_status <<~STATUS
-      ?? a/b/c
+      ?? a/b/c/
       ?? a/outer.txt
     STATUS
   end
