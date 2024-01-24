@@ -57,4 +57,18 @@ describe Command::Status do
     STATUS
   end
 
+  it 'does not list empty untracked directories' do
+    mkdir 'outer'
+
+    assert_status ''
+  end
+
+  it 'lists untracked directories that indirectly contain files' do
+    write_file 'outer/inner/file.txt', ''
+
+    assert_status <<~STATUS
+      ?? outer/
+    STATUS
+  end
+
 end

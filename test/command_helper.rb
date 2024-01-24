@@ -20,6 +20,10 @@ module CommandHelper
     @repository ||= Repository.new(repo_path.join('.git'))
   end
 
+  def mkdir(name)
+    FileUtils.mkdir_p(repo_path.join(name))
+  end
+
   def write_file(name, contents)
     path = repo_path.join(name)
     FileUtils.mkdir_p(path.dirname)
