@@ -3,6 +3,7 @@
 require_relative 'command/add'
 require_relative 'command/commit'
 require_relative 'command/init'
+require_relative 'command/status'
 
 # Conainer module that calls and executes first class commands (init, add, commit, etc)
 module Command
@@ -11,7 +12,8 @@ module Command
   COMMANDS = {
     'init' => Init,
     'add' => Add,
-    'commit' => Commit
+    'commit' => Commit,
+    'status' => Status
   }.freeze
 
   def self.execute(dir, env, argv, stdin, stdout, stderr)

@@ -44,7 +44,7 @@ class Index
   end
 
   def remove_children(path)
-    return unless @parents.has_key?(path)
+    return unless @parents.key?(path)
 
     children = @parents[path].clone
     children.each { |child| remove_entry(child) }
@@ -127,6 +127,10 @@ class Index
     entry.parent_directories.each do |dirname|
       @parents[dirname.to_s].add(entry.path)
     end
+  end
+
+  def tracked?(path)
+    @entries.key?(path.to_s)
   end
 
   def write_updates
