@@ -17,7 +17,7 @@ class Workspace
     elsif File.exist?(path)
       [relative]
     else
-      raise MissingFile, "pathspec #{relative} did not match any files"
+      raise MissingFile, "pathspec '#{relative}' did not match any files"
     end
   end
 

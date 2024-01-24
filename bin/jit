@@ -7,8 +7,8 @@ require_relative '../lib/command'
 ENV['DEBUG'] = 'true'
 
 begin
-  name = ARGV.shift
-  Command.execute(name)
+  cmd = Command.execute(Dir.getwd, ENV, ARGV, $stdin, $stdout, $stderr)
+  exit cmd.status
 rescue Command::Unknown => e
   $stderr.puts "jit: #{e.message}"
   exit 1
