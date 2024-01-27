@@ -1,0 +1,15 @@
+#! /usr/bin/env bash
+
+JIT_PATH=$(realpath ~/Code/git-in-ruby/my-jit)
+ARCHIVE_PATH=$(realpath ~/Code/git-in-ruby/jit-archive)
+
+# Copy files from my-jit to jit-archive
+rsync -av --exclude='.[^.]*' --filter='P bin/jit-archive/' --delete "$JIT_PATH/" "$ARCHIVE_PATH"
+
+# Grab most recent commit message from my-jit
+COMMIT_MSG=$(git -C "$JIT_PATH" log -1 --pretty=format:'%B')
+
+# Make a new commit in jit-archive using that message
+git -C "$ARCHIVE_PATH" add .
+git -C "$ARCHIVE_PATH" commit -m "$COMMIT_MSG"
+git -C "$ARCHIVE_PATH" push
