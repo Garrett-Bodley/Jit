@@ -133,6 +133,11 @@ class Index
     @entries.key?(path.to_s) or @parents.key?(path.to_s)
   end
 
+  def update_entry_stat(entry, stat)
+    entry.update_stat(stat)
+    @changed = true
+  end
+
   def write_updates
     return @lockfile.rollback unless @changed
 

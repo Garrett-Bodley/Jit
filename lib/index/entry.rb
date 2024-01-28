@@ -47,6 +47,24 @@ class Index
       mode == Entry.mode_for_stat(stat) and (size == 0 or size == stat.size)
     end
 
+    def times_match?(stat)
+      ctime == stat.ctime.to_i and ctime_nsec == stat.ctime.nsec and
+        mtime == stat.mtime.to_i and mtime_nsec == stat.mtime.nsec
+    end
+
+    def update_stat(stat)
+      self.ctime      = stat.ctime.to_i
+      self.ctime_nsec = stat.ctime.nsec
+      self.mtime      = stat.mtime.to_i
+      self.mtime_nsec = stat.mtime.nsec
+      self.dev        = stat.dev
+      self.ino        = stat.ino
+      self.mode       = Entry.mode_for_stat(stat)
+      self.uid        = stat.uid
+      self.gid        = stat.gid
+      self.size       = stat.size
+    end
+
     def to_s
       string = to_a.pack(ENTRY_FORMAT)
       string.concat("\0") until string.bytesize % ENTRY_BLOCK == 0

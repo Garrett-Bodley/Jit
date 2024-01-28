@@ -49,6 +49,10 @@ module CommandHelper
     @stdin = StringIO.new(string)
   end
 
+  def touch(name)
+    FileUtils.touch(repo_path.join(name))
+  end
+
   def jit_cmd(*argv)
     @env ||= {}
     @stdin = StringIO.new
