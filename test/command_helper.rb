@@ -32,7 +32,7 @@ module CommandHelper
     File.open(path, flags) { |file| file.write(contents) }
   end
 
-  def make_exectuable(name)
+  def make_executable(name)
     File.chmod(0o755, repo_path.join(name))
   end
 

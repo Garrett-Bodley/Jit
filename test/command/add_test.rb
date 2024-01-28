@@ -19,9 +19,9 @@ describe Command::Add do
     assert_index [[0o100644, 'hello.txt']]
   end
 
-  it 'adds an exectuable file to the index' do
+  it 'adds an executable file to the index' do
     write_file 'hello.txt', 'hello'
-    make_exectuable 'hello.txt'
+    make_executable 'hello.txt'
 
     jit_cmd 'add', 'hello.txt'
 
