@@ -17,14 +17,26 @@ class Database
   end
 
   def store(object)
-    # ASCII_8BIT = Binary
-    string = object.to_s.force_encoding(Encoding::ASCII_8BIT)
-    content = "#{ object.type } #{ string.bytesize }\0#{ string }"
-    object.oid = Digest::SHA1.hexdigest(content)
+    content = serialize_object(object)
+    object.oid = hash_content(content)
+
     write_object(object.oid, content)
   end
 
+  def hash_object(object)
+    hash_content(serialize_object(object))
+  end
+
   private
+
+  def serialize_object(object)
+    string = object.to_s.force_encoding(Encoding::ASCII_8BIT)
+    "#{ object.type } #{ string.bytesize }\0#{ string }"
+  end
+
+  def hash_content(string)
+    Digest::SHA1.hexdigest(string)
+  end
 
   def write_object(oid, content)
     # combines the path to the .git/objects directory,
