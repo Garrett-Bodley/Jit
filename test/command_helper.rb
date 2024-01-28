@@ -12,6 +12,10 @@ module CommandHelper
     suite.after { FileUtils.rm_rf(repo_path) }
   end
 
+  def delete(name)
+    FileUtils.rm_rf(repo_path.join(name))
+  end
+
   def repo_path
     Pathname.new(File.expand_path('../test-repo', __FILE__))
   end
