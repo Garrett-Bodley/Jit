@@ -109,6 +109,18 @@ describe Command::Status do
       STATUS
     end
 
+    it 'reports modified files that were previously empty' do
+      write_file 'empty.txt', ''
+      jit_cmd 'add', '.'
+      commit 'New commit.'
+
+      write_file 'empty.txt', 'not empty'
+
+      assert_status <<~STATUS
+        \ M empty.txt
+      STATUS
+    end
+
     it 'prints nothing if a files is touched' do
       touch '1.txt'
 
