@@ -148,7 +148,7 @@ describe Command::Status do
   describe 'head/index changes' do
     before do
       write_file '1.txt', 'one'
-      write_file '2.txt', 'two'
+      write_file 'a/2.txt', 'two'
       write_file 'a/b/3.txt', 'three'
 
       jit_cmd 'add', '.'
@@ -191,5 +191,25 @@ describe Command::Status do
       STATUS
     end
 
+    it 'reports deleted files' do
+      delete '1.txt'
+      delete '.git/index'
+      jit_cmd 'add', '.'
+
+      assert_status <<~STATUS
+        D  1.txt
+      STATUS
+    end
+
+    it 'reports all deleted files inside directories' do
+      delete 'a'
+      delete '.git/index'
+      jit_cmd 'add', '.'
+
+      assert_status <<~STATUS
+        D  a/2.txt
+        D  a/b/3.txt
+      STATUS
+    end
   end
 end
