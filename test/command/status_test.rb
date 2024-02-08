@@ -144,4 +144,36 @@ describe Command::Status do
       STATUS
     end
   end
+
+  describe 'head/index changes' do
+    before do
+      write_file '1.txt', 'one'
+      write_file '2.txt', 'two'
+      write_file 'a/b/3.txt', 'three'
+
+      jit_cmd 'add', '.'
+      commit 'first commit'
+    end
+
+    it 'reports a file added to a tracked directory' do
+      write_file 'a/4.txt', 'four'
+      jit_cmd 'add', '.'
+
+      assert_status <<~STATUS
+        A  a/4.txt
+      STATUS
+    end
+
+    it 'reports a file added to an untracked directory' do
+      write_file 'd/e/5.txt', 'five'
+      jit_cmd 'add', '.'
+
+      assert_status <<~STATUS
+        A  d/e/5.txt
+      STATUS
+    end
+
+
+
+  end
 end
