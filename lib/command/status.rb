@@ -12,6 +12,14 @@ module Command
       modified: 'M'
     }.freeze
 
+    LONG_STATUS = {
+      added: 'new file:',
+      deleted: 'deleted:',
+      modified: 'modified:'
+    }.freeze
+
+    LABEL_WIDTH = 12
+
     def run
       @stats     = {}
       @changed   = SortedSet.new
@@ -53,12 +61,52 @@ module Command
     end
 
     def print_results
+      if @args.first == '--porcelain'
+        print_porcelain_format
+      else
+        print_long_format
+      end
+    end
+
+    def print_porcelain_format
       @changed.each do |path|
         status = status_for(path)
         puts "#{ status } #{ path }"
       end
 
       @untracked_files.each { |path| puts "?? #{ path }"}
+    end
+
+    def print_long_format
+      print_changes('Changes to be committed', @index_changes)
+      print_changes('Changes not staged for commit', @workspace_changes)
+      print_changes('Untracked files', @untracked_files)
+
+      print_commit_status
+    end
+
+    def print_changes(message, changeset)
+      return if changeset.empty?
+
+      puts "#{message}:"
+      puts ''
+      changeset.each do |path, type|
+        status = type ? LONG_STATUS[type].ljust(LABEL_WIDTH, ' ') : ''
+        puts "\t#{status}#{path}"
+      end
+      puts ''
+    end
+
+    def print_commit_status
+      return if @index_changes.any?
+
+      if @workspace_changes.any?
+        puts 'no changes added to commit'
+      elsif @untracked_files.any?
+        puts 'nothing added to commit but untracked files present'
+      else
+        puts 'nothing to commit, working tree clean'
+      end
     end
 
     def read_tree(tree_oid, pathname = Pathname.new(''))
