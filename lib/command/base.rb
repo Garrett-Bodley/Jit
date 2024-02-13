@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require_relative '../color'
+
 module Command
   class Base
     attr_reader :status
@@ -11,6 +13,10 @@ module Command
       @stdin = stdin
       @stdout = stdout
       @stderr = stderr
+    end
+
+    def fmt(style, string)
+      @stdout.isatty ? Color.format(style, string) : string
     end
 
     def repo
