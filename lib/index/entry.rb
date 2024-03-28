@@ -49,7 +49,7 @@ class Index
 
     def times_match?(stat)
       ctime == stat.ctime.to_i and ctime_nsec == stat.ctime.nsec and
-        mtime == stat.mtime.to_i and mtime_nsec == stat.mtime.nsec
+      mtime == stat.mtime.to_i and mtime_nsec == stat.mtime.nsec
     end
 
     def update_stat(stat)

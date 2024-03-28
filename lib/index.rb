@@ -82,7 +82,7 @@ class Index
     if file
       reader = Checksum.new(file)
       count = read_header(reader)
-      reader_entries(reader, count)
+      read_entries(reader, count)
       reader.verify_checksum
     end
   ensure
@@ -100,7 +100,7 @@ class Index
     nil
   end
 
-  def reader_entries(reader, count)
+  def read_entries(reader, count)
     count.times do
       entry = reader.read(ENTRY_MIN_SIZE)
 
