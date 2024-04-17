@@ -40,6 +40,10 @@ class Database
     hash_content(serialize_object(object))
   end
 
+  def short_oid(oid)
+    oid[0..6]
+  end
+
   private
 
   def object_path(oid)

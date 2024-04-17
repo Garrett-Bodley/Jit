@@ -43,6 +43,10 @@ class Index
     remove_children(entry.path)
   end
 
+  def entry_for_path(path)
+    @entries[path.to_s]
+  end
+
   def remove_children(path)
     return unless @parents.key?(path)
 

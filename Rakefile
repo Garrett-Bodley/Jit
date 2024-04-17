@@ -8,4 +8,3 @@ Rake::TestTask.new do |task|
 end
 
 task default: :test
-# fee fi fo fum
