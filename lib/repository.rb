@@ -23,6 +23,10 @@ class Repository
     @refs ||= Refs.new(@git_path)
   end
 
+  def status
+    Status.new(self)
+  end
+
   def workspace
     @workspace ||= Workspace.new(@git_path.dirname)
   end
