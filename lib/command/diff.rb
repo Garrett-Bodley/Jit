@@ -27,7 +27,7 @@ module Command
     end
 
     private
-
+ 
     def from_index(path)
       entry = repo.index.entry_for_path(path)
       Target.new(path, entry.oid, entry.mode.to_s(8))
