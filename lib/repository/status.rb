@@ -5,7 +5,7 @@ require_relative '../sorted_hash'
 
 class Repository
   class Status
-    attr_reader :changed, :index_changes, :workspace_changes, :untracked_files, :stats
+    attr_reader :changed, :index_changes, :workspace_changes, :untracked_files, :stats, :head_tree
 
     def initialize(repository)
       @repo = repository
