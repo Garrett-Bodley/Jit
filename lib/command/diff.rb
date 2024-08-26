@@ -88,12 +88,12 @@ module Command
 
     def print_diff_mode(a, b)
       if a.mode.nil?
-        puts "new file mode #{ b.mode }"
+        header("new file mode #{ b.mode }")
       elsif b.mode.nil?
-        puts "deleted file mode #{ a.mode }"
+        header("deleted file mode #{ a.mode }")
       elsif a.mode != b.mode
-        puts "old mode #{ a.mode }"
-        puts "new mode #{ b.mode }"
+        header("old mode #{ a.mode }")
+        header("new mode #{ b.mode }")
       end
     end
 
@@ -112,8 +112,26 @@ module Command
     end
 
     def print_diff_hunk(hunk)
-      puts hunk.header
+      puts fmt(:cyan, hunk.header)
       hunk.edits.each { |edit| puts edit }
+    end
+
+    def print_diff_edit(edit)
+      text = edit.to_s.rstrip
+
+      case edit.type
+      when :eql
+        puts text
+      when :ins
+        puts fmt(:green, text)
+      when :del
+        puts fmt(:red, text)
+      end
+
+    end
+
+    def header(string)
+      puts fmt(:bold, string)
     end
 
     def short(oid)
