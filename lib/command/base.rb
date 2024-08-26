@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require_relative '../color'
+require_relative '../pager'
 
 module Command
   class Base
@@ -13,28 +14,45 @@ module Command
       @stdin = stdin
       @stdout = stdout
       @stderr = stderr
+
+      @isatty = @stdout.isatty
     end
 
-    def fmt(style, string)
-      @stdout.isatty ? Color.format(style, string) : string
+    def execute
+      catch(:exit) { run }
+
+      if defined? @pager
+        @stdout.close_write
+        @pager.wait
+      end
     end
+
+    private
 
     def repo
       @repo ||= Repository.new(Pathname.new(@dir).join('.git'))
     end
 
-    def execute
-      catch(:exit) { run }
-    end
-
-    private
-
     def expanded_pathname(path)
       Pathname.new(File.expand_path(path, @dir))
     end
 
+    def setup_pager
+      return if defined? @pager
+      return unless @isatty
+
+      @pager = Pager.new(@env, @stdout, @stderr)
+      @stdout = @pager.input
+    end
+
+    def fmt(style, string)
+      @isatty ? Color.format(style, string) : string
+    end
+
     def puts(string)
       @stdout.puts(string)
+    rescue Errno::EPIPE
+      exit 0
     end
 
     def exit(status = 0)

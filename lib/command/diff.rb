@@ -18,6 +18,8 @@ module Command
       repo.index.load
       @status = repo.status
 
+      setup_pager
+
       if @args.first == '--cached'
         diff_head_index
       else
