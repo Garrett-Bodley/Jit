@@ -27,11 +27,11 @@ My implementation does not (currently) have networking functionality, so I've pu
 
 # Getting Started
 
-Jit is built for Unix-based systems and does not support Windows. 
+Jit is built for Unix-based systems and does not support Windows.
 
 Jit should work out of the box after cloning the repository but will require you to enter the path to the binary file when called.
 
-ex: 
+ex:
 ```
 ./relative/path/to/Jit/bin/jit init
 ```
@@ -52,6 +52,7 @@ jit init
 jit add <filename|dirname|.>
 jit commit
 jit status
+jit diff
 ```
 
 `jit commit` does not currently support passing a message via flags (e.g. `jit commit -m "Commit message."`) but rather reads from `stdin` and writes whatever it finds as the commit message. Commit messages can be piped in via the `echo` command or by calling `cat` on a file that contains your message.
@@ -92,7 +93,7 @@ cat ~/Somewhere/COMMIT_MSG.txt | jit commit
 ### Blob
   - A **Blob** is a snapshot of a file's content at a particular point in time. The content is prepended with the word `blob`, a space, the size of the content in bytes, and a null byte.
   - When a blob is stored in the database its content is hashed via `SHA-1`. That hash is used as its `oid`. Then the metadata is prepended before Zlib compression and writing to disk.
-  - ex: 
+  - ex:
     ```
       > cat .git/objects/3b/18e512dba79e4c8300dd08aeb37f8e728b8dad
 
@@ -122,7 +123,7 @@ cat ~/Somewhere/COMMIT_MSG.txt | jit commit
   - The `SHA` of a directory corresponds to another Tree in the objects database. This means we are required to build the Trees bottom-up via a DFS traversal of the file system.
   - This method of storing a tree of information where each tree is labelled with the hash of its
 children is called a [**Merkle tree**](https://en.wikipedia.org/wiki/Merkle_tree)
-  - ex: 
+  - ex:
     ```
       > tree
       .
@@ -135,9 +136,9 @@ children is called a [**Merkle tree**](https://en.wikipedia.org/wiki/Merkle_tree
 
       # ex tree oid: ab0034597a3f1803ef6aa1be6910c9390bdf04a0
 
-      > cat .git/objects/ab/0034597a3f1803ef6aa1be6910c9390bdf04a0 
+      > cat .git/objects/ab/0034597a3f1803ef6aa1be6910c9390bdf04a0
 
-      x+)JMU045b040031QHJ,�+�(;�~�gm�VO�}���S�mTbnj��Z��\Z����������l�ٛ.^s���\Wu�Г���P��������M�ٸ �C�  {�)va���41��Ҥ�̢����J���;��+o�Zwb��e���zTsM|F%  
+      x+)JMU045b040031QHJ,�+�(;�~�gm�VO�}���S�mTbnj��Z��\Z����������l�ٛ.^s���\Wu�Г���P��������M�ٸ �C�  {�)va���41��Ҥ�̢����J���;��+o�Zwb��e���zTsM|F%
 
       > cat .git/objects/ab/0034597a3f1803ef6aa1be6910c9390bdf04a0 | zlib-flate -uncompress
 
@@ -165,12 +166,12 @@ children is called a [**Merkle tree**](https://en.wikipedia.org/wiki/Merkle_tree
   - A **Commit** lists the top-level tree of the snapshot, the parent commit, the author, the committer, an empty line, and the commit message.
   - Similar to Blobs and Trees, a Commit's content is prepended by the word `commit`, a space, the length of the content in bytes, and a null byte.
   - If a commit does not have a parent it is the root commit.
-  - ex: 
+  - ex:
     ```
 
       # ex commit oid: cf95d0d189c17ffea37edc8e89d17a6c758356f7
 
-      > cat .git/objects/cf/95d0d189c17ffea37edc8e89d17a6c758356f7 
+      > cat .git/objects/cf/95d0d189c17ffea37edc8e89d17a6c758356f7
 
         x��A
         �0E]�sK�4"��
@@ -222,7 +223,7 @@ children is called a [**Merkle tree**](https://en.wikipedia.org/wiki/Merkle_tree
 - Located at `.git/index`
 - The index functions as a cache that optimizes the performance of Jit and enables new functionality
   - It allows us to add files incrementally instead of committing the entire workspace at the time of each snapshot.
-  - It is used for the `status` and `diff` commands. The cache of `oid`s prevents the need to read and hash every file in the workspace when comparing the workspace files with the objects stored in the database. 
+  - It is used for the `status` and `diff` commands. The cache of `oid`s prevents the need to read and hash every file in the workspace when comparing the workspace files with the objects stored in the database.
   - It stores important metadata about each file, allowing us to quickly detect which files in the workspace have changed since we last called `jit add`.
 - Utilizes a custom binary packing format
 
@@ -333,11 +334,11 @@ Each entry consists of:
   > tail -c +53 .git/index | head -c 20 | hexdump -C
 
   00000000  ce 01 36 25 03 0b a8 db  a9 06 f7 56 96 7f 9e 9c  |..6%.......V....|
-  00000010  a3 94 46 4a 
+  00000010  a3 94 46 4a
 
   # If we look in the objects database we can see there's an object with that id!
   # In this case it's a blob
-  
+
   > cat .git/objects/ce/013625030ba8dba906f756967f9e9ca394464a | zlib-flate -uncompress
 
   blob 6hello

@@ -115,7 +115,7 @@ module Command
 
     def print_diff_hunk(hunk)
       puts fmt(:cyan, hunk.header)
-      hunk.edits.each { |edit| puts edit }
+      hunk.edits.each { |edit| print_diff_edit(edit) }
     end
 
     def print_diff_edit(edit)
@@ -129,7 +129,6 @@ module Command
       when :del
         puts fmt(:red, text)
       end
-
     end
 
     def header(string)
